@@ -3,21 +3,11 @@ const legendList = document.getElementById("legend-list");
 const nameInput = document.getElementById("name-input");
 const searchBtn = document.getElementById("search-btn");
 const resultCard = document.getElementById("result-card");
+const resultName = document.getElementById("result-name");
+const resultLocation = document.getElementById("result-location");
 const resultHint = document.querySelector(".result-card__hint");
 const resultBody = document.querySelector(".result-card__body");
-const resultMiniMap = document.getElementById("result-mini-map");
-const resultStudentName = document.getElementById("result-student-name");
-const resultGroupName = document.getElementById("result-group-name");
-const resultGroupPosition = document.getElementById("result-group-position");
-const resultGroupDesks = document.getElementById("result-group-desks");
 const nameSuggestions = document.getElementById("name-suggestions");
-
-/** 전체 배치도 미니맵: 칠판 아래 3×3 (8두레) */
-const MINI_MAP_ROWS = [
-  [1, 2, 3],
-  [4, 5, 6],
-  [7, 8, null],
-];
 
 const byGroup = STUDENTS.reduce((acc, student) => {
   if (!acc[student.group]) acc[student.group] = [];
@@ -77,97 +67,21 @@ function highlightSeat(student) {
   }, 100);
 }
 
-function buildMiniMap() {
-  if (!resultMiniMap || resultMiniMap.childElementCount > 0) return;
-
-  const board = document.createElement("div");
-  board.className = "mini-map__board";
-  board.setAttribute("aria-hidden", "true");
-  resultMiniMap.appendChild(board);
-
-  const grid = document.createElement("div");
-  grid.className = "mini-map__grid";
-  MINI_MAP_ROWS.forEach((row) => {
-    row.forEach((groupNum) => {
-      const cell = document.createElement("div");
-      if (groupNum === null) {
-        cell.className = "mini-map__cell mini-map__cell--empty";
-      } else {
-        cell.className = "mini-map__cell";
-        cell.dataset.group = String(groupNum);
-      }
-      grid.appendChild(cell);
-    });
-  });
-  resultMiniMap.appendChild(grid);
-}
-
-function setMiniMapActive(groupNum) {
-  if (!resultMiniMap) return;
-  resultMiniMap.querySelectorAll(".mini-map__cell[data-group]").forEach((cell) => {
-    cell.classList.toggle(
-      "mini-map__cell--active",
-      cell.dataset.group === String(groupNum)
-    );
-  });
-}
-
-function renderGroupDesks(groupNum, highlightSeatNum) {
-  const students = byGroup[groupNum];
-  const wrap = document.createElement("div");
-  wrap.className = "desks";
-
-  wrap.appendChild(createDeskRow(students.slice(0, 3), "desk-row desk-row--top"));
-
-  const bottom = students.slice(3);
-  let bottomClass = "desk-row desk-row--bottom";
-  if (bottom.length === 1) bottomClass += " desk-row--single";
-  else if (bottom.length === 2) bottomClass += " desk-row--pair";
-  wrap.appendChild(createDeskRow(bottom, bottomClass));
-
-  if (highlightSeatNum != null) {
-    wrap
-      .querySelector(`.desk[data-seat="${highlightSeatNum}"]`)
-      ?.classList.add("highlighted");
-  }
-
-  return wrap;
-}
-
-function renderResultDetail(student) {
-  buildMiniMap();
-  setMiniMapActive(student.group);
-
-  if (resultStudentName) {
-    resultStudentName.textContent = student.name;
-  }
-  if (resultGroupName) {
-    resultGroupName.textContent = GROUP_NAMES[student.group];
-  }
-  if (resultGroupPosition) {
-    resultGroupPosition.textContent = GROUP_POSITIONS[student.group];
-  }
-  if (resultGroupDesks) {
-    resultGroupDesks.replaceChildren();
-    resultGroupDesks.dataset.group = String(student.group);
-    resultGroupDesks.appendChild(
-      renderGroupDesks(student.group, student.seat)
-    );
-  }
-}
-
-function setResultCard(state, { student = null, error = "" } = {}) {
+function setResultCard(state, { name = "", location = "", error = "" } = {}) {
   resultCard.className = `result-card result-card--${state}`;
-  if (state === "success" && student) {
+  if (state === "success") {
     resultCard.hidden = false;
     resultHint.hidden = true;
     resultBody.hidden = false;
-    renderResultDetail(student);
+    resultName.textContent = name;
+    resultLocation.textContent = location;
   } else if (state === "error") {
     resultCard.hidden = false;
     resultHint.hidden = false;
     resultHint.textContent = error;
     resultBody.hidden = true;
+    resultName.textContent = "";
+    resultLocation.textContent = "";
   } else {
     resultCard.hidden = true;
     resultHint.textContent = "";
@@ -198,7 +112,10 @@ function showResult(student) {
     return;
   }
 
-  setResultCard("success", { student });
+  setResultCard("success", {
+    name: student.name,
+    location: formatLocation(student),
+  });
   highlightSeat(student);
 }
 
@@ -289,7 +206,6 @@ function initApp() {
   renderClassroom();
   renderLegend();
   setupSuggestions();
-  buildMiniMap();
   setResultCard("idle");
 
   searchBtn?.addEventListener("click", search);
