@@ -61,7 +61,9 @@ function highlightSeat(student) {
     `.desk[data-group="${student.group}"][data-seat="${student.seat}"]`
   );
   deskEl?.classList.add("highlighted");
-  deskEl?.scrollIntoView({ behavior: "smooth", block: "center" });
+  setTimeout(() => {
+    deskEl?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, 100);
 }
 
 function setResultCard(state, { name = "", location = "", error = "" } = {}) {
