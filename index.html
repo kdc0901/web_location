@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="assets/icon.svg" />
-  <link rel="stylesheet" href="css/style.css?v=5" />
+  <link rel="stylesheet" href="css/style.css?v=6" />
 </head>
 <body>
   <div class="app">
@@ -46,8 +46,21 @@
       >
         <p class="result-card__hint"></p>
         <div class="result-card__body" hidden>
-          <p class="result-card__name" id="result-name"></p>
-          <p class="result-card__location" id="result-location"></p>
+          <div class="result-detail">
+            <div class="result-detail__head">
+              <div
+                class="mini-map"
+                id="result-mini-map"
+                aria-label="교실 전체 배치에서 이 두레 위치"
+              ></div>
+              <div class="result-detail__title">
+                <p class="result-detail__student" id="result-student-name"></p>
+                <p class="result-detail__group" id="result-group-name"></p>
+                <p class="result-detail__position" id="result-group-position"></p>
+              </div>
+            </div>
+            <div class="result-detail__desks" id="result-group-desks"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -71,8 +84,8 @@
     </details>
   </div>
 
-  <script src="js/data.js?v=5"></script>
-  <script src="js/app.js?v=5"></script>
+  <script src="js/data.js?v=6"></script>
+  <script src="js/app.js?v=6"></script>
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
