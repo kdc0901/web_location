@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="assets/icon.svg" />
-  <link rel="stylesheet" href="css/style.css?v=3" />
+  <link rel="stylesheet" href="css/style.css?v=5" />
 </head>
 <body>
   <div class="app">
@@ -37,28 +37,30 @@
         </div>
       </section>
 
-      <section
+      <div
         id="result-card"
         class="result-card result-card--idle"
         aria-live="polite"
         aria-label="검색 결과"
+        hidden
       >
-        <p class="result-card__hint">이름을 입력하고 「찾기」를 누르면 자리가 표시됩니다.</p>
+        <p class="result-card__hint"></p>
         <div class="result-card__body" hidden>
-          <p class="result-card__label">찾은 사람</p>
           <p class="result-card__name" id="result-name"></p>
-          <p class="result-card__label">위치</p>
           <p class="result-card__location" id="result-location"></p>
         </div>
-      </section>
+      </div>
     </div>
 
-    <section class="classroom" aria-label="교실 전체 배치도">
-      <div class="blackboard" aria-hidden="true">
-        <span>승현반 칠판</span>
-        <small>12시 방향</small>
+    <section class="layout-section" aria-label="교실 전체 배치도">
+      <h2 class="layout-title">전체배치도</h2>
+      <div class="layout-map">
+        <div class="blackboard" aria-hidden="true">
+          <span>승현반 칠판</span>
+          <small>12시 방향</small>
+        </div>
+        <div class="groups-grid" id="groups-grid"></div>
       </div>
-      <div class="groups-grid" id="groups-grid"></div>
     </section>
 
     <details class="legend-toggle">
@@ -69,8 +71,8 @@
     </details>
   </div>
 
-  <script src="js/data.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/data.js?v=5"></script>
+  <script src="js/app.js?v=5"></script>
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {

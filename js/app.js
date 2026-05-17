@@ -16,6 +16,7 @@ const byGroup = STUDENTS.reduce((acc, student) => {
 }, {});
 
 for (let g = 1; g <= GROUP_COUNT; g += 1) {
+  if (!byGroup[g]) byGroup[g] = [];
   byGroup[g].sort((a, b) => a.seat - b.seat);
 }
 
@@ -69,19 +70,21 @@ function highlightSeat(student) {
 function setResultCard(state, { name = "", location = "", error = "" } = {}) {
   resultCard.className = `result-card result-card--${state}`;
   if (state === "success") {
+    resultCard.hidden = false;
     resultHint.hidden = true;
     resultBody.hidden = false;
     resultName.textContent = name;
     resultLocation.textContent = location;
   } else if (state === "error") {
+    resultCard.hidden = false;
     resultHint.hidden = false;
     resultHint.textContent = error;
     resultBody.hidden = true;
     resultName.textContent = "";
     resultLocation.textContent = "";
   } else {
-    resultHint.hidden = false;
-    resultHint.textContent = "이름을 입력하고 「찾기」를 누르면 자리가 표시됩니다.";
+    resultCard.hidden = true;
+    resultHint.textContent = "";
     resultBody.hidden = true;
   }
 }
@@ -168,6 +171,11 @@ function renderGroup(groupNum) {
 }
 
 function renderClassroom() {
+  if (!groupsGrid) {
+    console.error("groups-grid 요소를 찾을 수 없습니다.");
+    return;
+  }
+  groupsGrid.replaceChildren();
   for (let g = 1; g <= GROUP_COUNT; g += 1) {
     groupsGrid.appendChild(renderGroup(g));
   }
@@ -194,11 +202,20 @@ function search() {
   showResult(findStudent(nameInput.value));
 }
 
-renderClassroom();
-renderLegend();
-setupSuggestions();
+function initApp() {
+  renderClassroom();
+  renderLegend();
+  setupSuggestions();
+  setResultCard("idle");
 
-searchBtn.addEventListener("click", search);
-nameInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") search();
-});
+  searchBtn?.addEventListener("click", search);
+  nameInput?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") search();
+  });
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initApp);
+} else {
+  initApp();
+}
