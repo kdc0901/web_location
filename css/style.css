@@ -8,8 +8,10 @@
   --highlight: #fef08a;
   --highlight-border: #eab308;
   --blackboard: #1e3a2f;
-  --desk: #c4a574;
-  --desk-border: #8b6914;
+  --success-bg: #ecfdf5;
+  --success-border: #10b981;
+  --error-bg: #fef2f2;
+  --error-border: #f87171;
   --group-1: #dbeafe;
   --group-2: #fce7f3;
   --group-3: #d1fae5;
@@ -20,6 +22,8 @@
   --group-8: #ffe4e6;
   --shadow: 0 4px 24px rgba(26, 35, 50, 0.08);
   --radius: 12px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 *,
@@ -35,38 +39,47 @@ body {
   background: linear-gradient(160deg, #e8eef5 0%, var(--bg) 40%, #e2e8f0 100%);
   color: var(--text);
   line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
 }
 
 .app {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 1.5rem 1.25rem 3rem;
+  padding: calc(1rem + var(--safe-top)) 1rem calc(2rem + var(--safe-bottom));
 }
 
+/* ── 헤더 ── */
 .header {
   text-align: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .header h1 {
   margin: 0;
-  font-size: 1.75rem;
+  font-size: clamp(1.35rem, 4vw, 1.75rem);
   font-weight: 700;
   letter-spacing: -0.02em;
 }
 
 .subtitle {
-  margin: 0.35rem 0 0;
+  margin: 0.3rem 0 0;
   color: var(--muted);
-  font-size: 0.95rem;
+  font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+}
+
+/* ── 상단: 이름 찾기 + 결과 (배치도 위) ── */
+.top-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-bottom: 1rem;
 }
 
 .search-panel {
   background: var(--surface);
   border-radius: var(--radius);
-  padding: 1.25rem 1.5rem;
+  padding: 1rem 1.1rem;
   box-shadow: var(--shadow);
-  margin-bottom: 1.5rem;
 }
 
 .search-label {
@@ -83,10 +96,11 @@ body {
 
 .search-row input {
   flex: 1;
-  padding: 0.65rem 0.9rem;
+  min-width: 0;
+  padding: 0.7rem 0.9rem;
   border: 1px solid #cbd5e1;
   border-radius: 8px;
-  font-size: 1rem;
+  font-size: 16px;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
@@ -97,7 +111,8 @@ body {
 }
 
 .search-row button {
-  padding: 0.65rem 1.25rem;
+  flex-shrink: 0;
+  padding: 0.7rem 1.1rem;
   background: var(--accent);
   color: #fff;
   border: none;
@@ -106,33 +121,101 @@ body {
   font-weight: 600;
   cursor: pointer;
   transition: background 0.15s;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .search-row button:hover {
   background: var(--accent-hover);
 }
 
-.result-message {
-  margin: 0.75rem 0 0;
-  min-height: 1.5em;
-  font-size: 0.95rem;
+.search-row button:active {
+  transform: scale(0.98);
 }
 
-.result-message.success {
-  color: #047857;
+/* ── 검색 결과 카드 (이름 + 위치) ── */
+.result-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 0.85rem 1rem;
+  border: 2px solid #e2e8f0;
+  box-shadow: var(--shadow);
+}
+
+.result-card--idle {
+  border-color: #e2e8f0;
+}
+
+.result-card--success {
+  background: var(--success-bg);
+  border-color: var(--success-border);
+}
+
+.result-card--error {
+  background: var(--error-bg);
+  border-color: var(--error-border);
+}
+
+.result-card__hint {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+.result-card--error .result-card__hint {
+  color: #b91c1c;
   font-weight: 500;
 }
 
-.result-message.error {
-  color: #b91c1c;
+.result-card__body {
+  text-align: center;
 }
 
+.result-card__label {
+  margin: 0.5rem 0 0.15rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.result-card__label:first-child {
+  margin-top: 0;
+}
+
+.result-card__name {
+  margin: 0;
+  font-size: clamp(1.15rem, 4.5vw, 1.4rem);
+  font-weight: 700;
+  color: var(--text);
+}
+
+.result-card__location {
+  margin: 0;
+  font-size: clamp(0.9rem, 3.5vw, 1.05rem);
+  font-weight: 500;
+  color: #047857;
+  line-height: 1.45;
+  word-break: keep-all;
+}
+
+/* ── 교실 전체 배치도 ── */
 .classroom {
   background: var(--surface);
   border-radius: var(--radius);
-  padding: 1.25rem;
+  padding: 1rem;
   box-shadow: var(--shadow);
-  margin-bottom: 1.25rem;
+}
+
+.classroom::before {
+  content: "전체 배치도";
+  display: block;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 0.65rem;
 }
 
 .blackboard {
@@ -144,40 +227,39 @@ body {
   background: linear-gradient(180deg, #2d5a47 0%, var(--blackboard) 100%);
   color: #a7f3d0;
   border-radius: 8px;
-  padding: 0.75rem 1rem;
-  margin-bottom: 1.25rem;
+  padding: 0.7rem 1rem;
+  margin-bottom: 1rem;
   border: 3px solid #14532d;
   box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .blackboard span {
   font-weight: 700;
-  font-size: 1.1rem;
-  letter-spacing: 0.15em;
+  font-size: clamp(0.95rem, 3vw, 1.1rem);
+  letter-spacing: 0.1em;
 }
 
 .blackboard small {
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   opacity: 0.85;
 }
 
 .groups-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 0.85rem;
+  gap: 0.75rem;
 }
 
 .group {
   border-radius: 10px;
-  padding: 0.75rem;
+  padding: 0.65rem 0.5rem;
   border: 2px solid transparent;
-  transition: border-color 0.2s, transform 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .group.highlighted {
   border-color: var(--highlight-border);
-  transform: scale(1.02);
-  box-shadow: 0 0 0 4px rgba(234, 179, 8, 0.25);
+  box-shadow: 0 0 0 4px rgba(234, 179, 8, 0.35);
 }
 
 .group-header {
@@ -185,18 +267,18 @@ body {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  margin-bottom: 0.6rem;
-  gap: 0.15rem;
+  margin-bottom: 0.5rem;
+  gap: 0.1rem;
 }
 
 .group-header strong {
-  font-size: 1rem;
+  font-size: clamp(0.85rem, 2.8vw, 1rem);
   letter-spacing: -0.02em;
 }
 
 .group-header span {
   color: var(--muted);
-  font-size: 0.7rem;
+  font-size: 0.65rem;
 }
 
 .group[data-group="1"] { background: var(--group-1); }
@@ -208,19 +290,14 @@ body {
 .group[data-group="7"] { background: var(--group-7); }
 .group[data-group="8"] { background: var(--group-8); }
 
-.legend .count {
-  font-size: 0.75rem;
-  opacity: 0.85;
-}
-
-/* 두레 내 3-2 배치 (칠판 쪽이 위) */
+/* 두레 내 3-2 배치 */
 .desks {
-  --desk-gap: 0.25rem;
+  --desk-gap: 0.2rem;
   --desk-w: calc((100% - var(--desk-gap) * 2) / 3);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.35rem;
   width: 100%;
 }
 
@@ -256,10 +333,10 @@ body {
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 0.25rem;
+  gap: 0.2rem;
   text-align: center;
-  padding: 0.35rem 0.3rem;
-  min-height: 2.1rem;
+  padding: 0.3rem 0.2rem;
+  min-height: 2rem;
   cursor: default;
   transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
   white-space: normal;
@@ -269,59 +346,77 @@ body {
 .desk.highlighted {
   background: var(--highlight);
   border-color: var(--highlight-border);
-  transform: scale(1.08);
+  transform: scale(1.06);
   z-index: 1;
-  box-shadow: 0 4px 12px rgba(234, 179, 8, 0.4);
+  box-shadow: 0 4px 12px rgba(234, 179, 8, 0.45);
 }
 
 .desk .seat-num {
   flex-shrink: 0;
   font-weight: 700;
   color: var(--text);
-  font-size: 0.9rem;
+  font-size: clamp(0.75rem, 2.5vw, 0.9rem);
   line-height: 1;
 }
 
 .desk .student-name {
-  font-size: 0.78rem;
+  font-size: clamp(0.65rem, 2.2vw, 0.78rem);
   font-weight: 500;
   color: var(--text);
-  line-height: 1.25;
-  overflow: visible;
-  text-overflow: unset;
+  line-height: 1.2;
   word-break: keep-all;
-  white-space: normal;
   flex: 0 1 auto;
 }
 
 .group--wide .desk .student-name {
-  font-size: 0.72rem;
+  font-size: clamp(0.6rem, 2vw, 0.72rem);
 }
 
-.group--wide .desk .seat-num {
-  font-size: 0.82rem;
+/* ── 그룹 위치 안내 (접기) ── */
+.legend-toggle {
+  margin-top: 1rem;
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.legend-toggle summary {
+  padding: 0.85rem 1rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  list-style: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.legend-toggle summary::-webkit-details-marker {
+  display: none;
+}
+
+.legend-toggle summary::after {
+  content: " ▼";
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+
+.legend-toggle[open] summary::after {
+  content: " ▲";
 }
 
 .legend {
-  background: var(--surface);
-  border-radius: var(--radius);
-  padding: 1rem 1.25rem;
-  box-shadow: var(--shadow);
-}
-
-.legend h2 {
-  margin: 0 0 0.5rem;
-  font-size: 0.95rem;
+  padding: 0 1rem 1rem;
+  border-top: 1px solid #e2e8f0;
 }
 
 .legend ul {
-  margin: 0;
+  margin: 0.75rem 0 0;
   padding: 0;
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 0.35rem 1rem;
-  font-size: 0.85rem;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.35rem 0.75rem;
+  font-size: 0.82rem;
   color: var(--muted);
 }
 
@@ -329,18 +424,90 @@ body {
   color: var(--text);
 }
 
+.legend .count {
+  font-size: 0.72rem;
+  opacity: 0.85;
+}
+
+/* ── 태블릿: 2열 ── */
 @media (max-width: 900px) {
   .groups-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 0.65rem;
   }
 }
 
-@media (max-width: 560px) {
+/* ── 모바일: 1열 + 상단 고정 ── */
+@media (max-width: 640px) {
+  .app {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  .top-section {
+    position: sticky;
+    top: var(--safe-top);
+    z-index: 50;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.25rem;
+    background: linear-gradient(
+      180deg,
+      #e8eef5 0%,
+      #e8eef5 85%,
+      transparent 100%
+    );
+  }
+
+  .search-panel {
+    padding: 0.85rem;
+  }
+
+  .search-row {
+    flex-direction: column;
+  }
+
+  .search-row button {
+    width: 100%;
+    padding: 0.75rem;
+  }
+
   .groups-grid {
     grid-template-columns: 1fr;
+    gap: 0.6rem;
+  }
+
+  .group {
+    padding: 0.75rem 0.65rem;
+  }
+
+  .desks {
+    --desk-gap: 0.35rem;
+    --desk-w: calc((100% - var(--desk-gap) * 2) / 3);
+    max-width: 320px;
+    margin: 0 auto;
+  }
+
+  .desk {
+    min-height: 2.25rem;
+    padding: 0.4rem 0.25rem;
   }
 
   .desk .student-name {
+    font-size: 0.72rem;
+  }
+
+  .desk .seat-num {
     font-size: 0.85rem;
+  }
+
+  .classroom {
+    padding: 0.85rem 0.65rem;
+  }
+}
+
+/* ── 아주 좁은 화면 ── */
+@media (max-width: 360px) {
+  .desks {
+    max-width: 100%;
   }
 }

@@ -19,35 +19,54 @@
       <p class="subtitle">8두레 · 총 38명</p>
     </header>
 
-    <section class="search-panel">
-      <label for="name-input" class="search-label">이름으로 자리 찾기</label>
-      <div class="search-row">
-        <input
-          id="name-input"
-          type="text"
-          placeholder="예: 최서연, (초등) 이현주"
-          autocomplete="off"
-          list="name-suggestions"
-        />
-        <datalist id="name-suggestions"></datalist>
-        <button type="button" id="search-btn">찾기</button>
-      </div>
-      <p id="result-message" class="result-message" aria-live="polite"></p>
-    </section>
+    <div class="top-section">
+      <section class="search-panel" aria-label="이름으로 자리 찾기">
+        <label for="name-input" class="search-label">이름으로 자리 찾기</label>
+        <div class="search-row">
+          <input
+            id="name-input"
+            type="search"
+            inputmode="search"
+            enterkeyhint="search"
+            placeholder="예: 최서연, (초등) 이현주"
+            autocomplete="off"
+            list="name-suggestions"
+          />
+          <datalist id="name-suggestions"></datalist>
+          <button type="button" id="search-btn">찾기</button>
+        </div>
+      </section>
 
-    <section class="classroom" aria-label="교실 배치도">
+      <section
+        id="result-card"
+        class="result-card result-card--idle"
+        aria-live="polite"
+        aria-label="검색 결과"
+      >
+        <p class="result-card__hint">이름을 입력하고 「찾기」를 누르면 자리가 표시됩니다.</p>
+        <div class="result-card__body" hidden>
+          <p class="result-card__label">찾은 사람</p>
+          <p class="result-card__name" id="result-name"></p>
+          <p class="result-card__label">위치</p>
+          <p class="result-card__location" id="result-location"></p>
+        </div>
+      </section>
+    </div>
+
+    <section class="classroom" aria-label="교실 전체 배치도">
       <div class="blackboard" aria-hidden="true">
-        <span>승현반 칠판 </span>
+        <span>승현반 칠판</span>
         <small>12시 방향</small>
       </div>
-
       <div class="groups-grid" id="groups-grid"></div>
     </section>
 
-    <aside class="legend">
-      <h2>그룹 위치</h2>
-      <ul id="legend-list"></ul>
-    </aside>
+    <details class="legend-toggle">
+      <summary>그룹 위치 안내</summary>
+      <aside class="legend">
+        <ul id="legend-list"></ul>
+      </aside>
+    </details>
   </div>
 
   <script src="js/data.js"></script>

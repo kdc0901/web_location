@@ -2,7 +2,11 @@ const groupsGrid = document.getElementById("groups-grid");
 const legendList = document.getElementById("legend-list");
 const nameInput = document.getElementById("name-input");
 const searchBtn = document.getElementById("search-btn");
-const resultMessage = document.getElementById("result-message");
+const resultCard = document.getElementById("result-card");
+const resultName = document.getElementById("result-name");
+const resultLocation = document.getElementById("result-location");
+const resultHint = document.querySelector(".result-card__hint");
+const resultBody = document.querySelector(".result-card__body");
 const nameSuggestions = document.getElementById("name-suggestions");
 
 const byGroup = STUDENTS.reduce((acc, student) => {
@@ -60,22 +64,53 @@ function highlightSeat(student) {
   deskEl?.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
+function setResultCard(state, { name = "", location = "", error = "" } = {}) {
+  resultCard.className = `result-card result-card--${state}`;
+  if (state === "success") {
+    resultHint.hidden = true;
+    resultBody.hidden = false;
+    resultName.textContent = name;
+    resultLocation.textContent = location;
+  } else if (state === "error") {
+    resultHint.hidden = false;
+    resultHint.textContent = error;
+    resultBody.hidden = true;
+    resultName.textContent = "";
+    resultLocation.textContent = "";
+  } else {
+    resultHint.hidden = false;
+    resultHint.textContent = "이름을 입력하고 「찾기」를 누르면 자리가 표시됩니다.";
+    resultBody.hidden = true;
+  }
+}
+
 function showResult(student) {
   if (!student) {
     const q = nameInput.value.trim();
+    if (!q) {
+      setResultCard("idle");
+      clearHighlights();
+      return;
+    }
     const partial = STUDENTS.filter((s) => s.name.includes(q));
     if (partial.length > 1) {
-      resultMessage.textContent = `여러 명이 검색되었습니다. 전체 이름을 입력해 주세요. (예: ${partial.map((s) => s.name).join(", ")})`;
+      setResultCard("error", {
+        error: `여러 명이 검색되었습니다. 전체 이름을 입력해 주세요. (예: ${partial.map((s) => s.name).join(", ")})`,
+      });
     } else {
-      resultMessage.textContent =
-        "해당 이름을 찾을 수 없습니다. 전체 이름을 입력하거나 일부만 입력해 보세요.";
+      setResultCard("error", {
+        error:
+          "해당 이름을 찾을 수 없습니다. 전체 이름을 입력하거나 일부만 입력해 보세요.",
+      });
     }
-    resultMessage.className = "result-message error";
     clearHighlights();
     return;
   }
-  resultMessage.textContent = `${student.name}님 → ${formatLocation(student)}`;
-  resultMessage.className = "result-message success";
+
+  setResultCard("success", {
+    name: student.name,
+    location: formatLocation(student),
+  });
   highlightSeat(student);
 }
 
