@@ -1,0 +1,16 @@
+{
+  "appId": "kr.classroom.seating",
+  "appName": "교실 자리배치",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": true,
+      "backgroundColor": "#f0f4f8",
+      "showSpinner": false
+    }
+  }
+}

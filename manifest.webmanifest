@@ -1,0 +1,19 @@
+{
+  "name": "교실 자리배치",
+  "short_name": "자리배치",
+  "description": "이름으로 교실 자리를 찾습니다",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f0f4f8",
+  "theme_color": "#2563eb",
+  "orientation": "any",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

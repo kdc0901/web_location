@@ -1,0 +1,68 @@
+{
+  "name": "classroom-seating",
+  "version": "1.0.0",
+  "description": "교실 자리배치",
+  "main": "electron/main.js",
+  "author": "",
+  "license": "MIT",
+  "scripts": {
+    "icon": "node scripts/generate-app-icon.js",
+    "start": "electron .",
+    "build:desktop": "npm run icon && electron-builder",
+    "build:desktop:mac": "npm run icon && electron-builder --mac",
+    "build:desktop:win": "npm run icon && electron-builder --win",
+    "build:desktop:linux": "npm run icon && electron-builder --linux",
+    "copy:www": "node scripts/copy-www.js",
+    "mobile:setup": "npm run copy:www && npx cap add android && npx cap add ios",
+    "mobile:sync": "npm run copy:www && npx cap sync",
+    "mobile:android": "npx cap open android",
+    "mobile:ios": "npx cap open ios",
+    "build:android": "bash scripts/build-android.sh"
+  },
+  "build": {
+    "appId": "kr.classroom.seating",
+    "productName": "교실 자리배치",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "index.html",
+      "css/**/*",
+      "js/**/*",
+      "manifest.webmanifest",
+      "sw.js",
+      "assets/**/*",
+      "electron/main.js"
+    ],
+    "icon": "build/icon.png",
+    "asar": true,
+    "mac": {
+      "category": "public.app-category.education",
+      "target": ["dmg", "zip"]
+    },
+    "win": {
+      "target": ["nsis", "portable"]
+    },
+    "linux": {
+      "target": ["AppImage"]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerLanguages": ["ko", "en"]
+    }
+  },
+  "devDependencies": {
+    "@capacitor/android": "^6.2.0",
+    "@capacitor/cli": "^6.2.0",
+    "@capacitor/core": "^6.2.0",
+    "@capacitor/ios": "^6.2.0",
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8"
+  },
+  "dependencies": {
+    "@capacitor/app": "^6.0.2",
+    "@capacitor/splash-screen": "^6.0.3",
+    "@capacitor/status-bar": "^6.0.2"
+  }
+}
